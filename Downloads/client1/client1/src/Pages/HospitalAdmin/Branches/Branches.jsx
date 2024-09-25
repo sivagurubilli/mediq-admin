@@ -10,6 +10,7 @@ import { pagesToShowInitially } from "../../../utils/Regex";
 import {  API_PATHS } from "../../../utils/constants/api.constants";
 import HospitalService from "../../../services/MasterData/hospital.service";
 import EditModal from "../../../utils/helpers/Modals/Editmodal";
+import branchService from "../../../services/HospitalAdmin/branch.service";
 
 const HospitalBranches = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const HospitalBranches = () => {
 
   const getData = async () => {
     try {
-      let data = await HospitalService.getHospital();
+      let data = await branchService.getBranches();
     
       setRow(data?.data);
       setTotalData(data?.data?.length);
@@ -53,7 +54,7 @@ const HospitalBranches = () => {
   
   const handleDelete1 = async () => {
     try {
-      let data = await HospitalService.deleteHospital({}, deleteId);
+      let data = await branchService.deleteBranches({}, deleteId);
       getData();
       alert(data?.message || "Success");
       setTimeout(() => setShowModal(false), 1000);
@@ -88,36 +89,22 @@ const HospitalBranches = () => {
         accessor: "_id",
       },
       {
-        Header: "Hospital Name",
-        accessor: "hospitalName",
+        Header: "Branch Name",
+        accessor: "branchname",
       },
       {
-        Header: " Hospital Type",
-        accessor: "type",
+        Header: "Branch Type",
+        accessor: "emergencyTypes",
       },
       {
-        Header: "Hospital Admin Name",
-        accessor: "hospitalAdminName",
+        Header: "Branch Admin Name",
+        accessor: "branchadminname",
+      },
+      {
+        Header: "Branch Admin Contact",
+        accessor: "phone",
       },
       
-      {
-        Header: "logo",
-        accessor: "logo",
-        Cell: ({ row }) => {
-          const imageUrl = row?.original?.logo;
-         
-          return (
-            <img
-            crossorigin="anonymous" 
-            src={API_PATHS.Apiurl + imageUrl} 
-                          alt="listing"
-              style={{ maxWidth: "100px", maxHeight: "100px" }}
-              onError={(e) => { e.target.src = logo11; }} // Handle broken image link
-            />
-          );
-        },
-      },
-    
       {
         Header: "Action",
         Cell: ({ row }) => (
@@ -148,7 +135,7 @@ const HospitalBranches = () => {
   const filteredData = useMemo(() => {
     return row?.filter((item) => {
       return (
-        item.hospitalName.toLowerCase().includes(searchInput.toLowerCase()) 
+        item.branchname.toLowerCase().includes(searchInput.toLowerCase()) 
       );
     });
    

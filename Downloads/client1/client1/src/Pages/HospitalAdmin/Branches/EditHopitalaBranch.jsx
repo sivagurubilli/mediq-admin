@@ -12,7 +12,6 @@ import LystingService from '../../../services/MasterData/listing.service';
 const validationSchema = Yup.object().shape({
   emergencytype: Yup.string().required('Type is required'),
   branchname: Yup.string().required('Branch Name is required'),
-  email: Yup.string().email('Invalid email').required('Email is required'),
   phone: Yup.string().required('Phone is required'),
   addressline1: Yup.string().required('Address is required'),
   country: Yup.string().required('Country is required'),

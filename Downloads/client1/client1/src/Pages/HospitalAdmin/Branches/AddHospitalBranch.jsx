@@ -7,12 +7,12 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import LystingService from '../../../services/MasterData/listing.service';
+import branchService from '../../../services/HospitalAdmin/branch.service';
 
 // Validation schema
 const validationSchema = Yup.object().shape({
   emergencyTypes: Yup.string().required('Type is required'),
   branchname: Yup.string().required('Branch Name is required'),
-  email: Yup.string().email('Invalid email').required('Email is required'),
   phone: Yup.string().required('Phone is required'),
   phone2:Yup.string(),
   addressline1: Yup.string().required('Address is required'),
@@ -64,16 +64,10 @@ const AddHospitalBranch = () => {
   });
 
   const onSubmit = async (formData) => {
-    const formDataToSubmit = new FormData();
-
-
  try{
-    // Append each property to FormData
-  
-
-      let response = await LystingService.createListing(formData);
+      let response = await branchService.createBranches(formData);
       if (response.status === 200) {
-        navigate(`/hospitals/branch`);
+        navigate(`/hospitals/branches`);
         alert(response.message);
       } else {
         alert(response.message);
@@ -119,7 +113,7 @@ const AddHospitalBranch = () => {
       console.error('Error', error);
     }
   };
- 
+ console.log(errors)
   return (
     <div className="container mt-5">
        <div
@@ -158,7 +152,20 @@ const AddHospitalBranch = () => {
                 </Row>
 
                 {/* Name */}
-             
+                <Row className="d-flex justify-content-center mb-3">
+                  <Col md={3} className="d-flex align-items-center mt-1">
+                    <Form.Label className="fs-6">Branch Name</Form.Label>
+                    <span style={{ color: "red", marginTop: "-15px" }}>*</span>
+                  </Col>
+                  <Col md={4}>
+                    <Form.Group controlId="branchname">
+                      <InputGroup>
+                        <Form.Control type="text" placeholder="Enter branchname" {...register("branchname")} />
+                      </InputGroup>
+                      {errors.branchname && <p className="text-danger">{errors.branchname.message}</p>}
+                    </Form.Group>
+                  </Col>
+                </Row>
              
                 {/* Phone */}
                 <Row className="d-flex justify-content-center mb-3">
@@ -169,7 +176,7 @@ const AddHospitalBranch = () => {
                   <Col md={4}>
                     <Form.Group controlId="phone">
                       <InputGroup>
-                        <Form.Control type="tel" placeholder="Enter Phone" {...register("phone")} />
+                        <Form.Control type="text" placeholder="Enter Phone" {...register("phone")} />
                       </InputGroup>
                       {errors.phone && <p className="text-danger">{errors.phone.message}</p>}
                     </Form.Group>
@@ -182,7 +189,7 @@ const AddHospitalBranch = () => {
                   <Col md={4}>
                     <Form.Group controlId="phone2">
                       <InputGroup>
-                        <Form.Control type="tel" placeholder="Enter alternate Phone" {...register("phone2")} />
+                        <Form.Control type="text" placeholder="Enter alternate Phone" {...register("phone2")} />
                       </InputGroup>
                       {errors.phone2 && <p className="text-danger">{errors.phone2.message}</p>}
                     </Form.Group>
