@@ -86,7 +86,7 @@ const BookingManagers = () => {
   const handlePageChange = ({ selected }) => {
     const newPage = selected + 1;
     setCurrentPage(newPage);
-    setSearch({ page: newPage }, { replace: true });
+
   };
 
   useEffect(() => {
@@ -119,8 +119,10 @@ const BookingManagers = () => {
         Header: "Assigned Hospitals",
         accessor: "assignedHospitals", // Change to access the amenities array
         Cell: ({ row }) => {
-          const assignedHospitals = row.original.assignedHospitals; // Access the amenities array
-          
+          const assignedHospitals = row.original.assignedHospitals
+          ? row.original.assignedHospitals.filter(hospital => hospital.active === true)
+          : [];
+              
           // Map over amenities to get their names
           return (
             <div>
@@ -138,14 +140,15 @@ const BookingManagers = () => {
         Header: "Assigned Private Ambulances",
         accessor: "assignedPrivateAmbulances", // Change to access the amenities array
         Cell: ({ row }) => {
-          const assignedPrivateAmbulances = row.original.assignedPrivateAmbulances; // Access the amenities array
-          
+          const assignedPrivateAmbulances =  row.original.assignedPrivateAmbulances
+          ? row.original.assignedPrivateAmbulances.filter(hospital => hospital.active === true)
+          : [];
           // Map over amenities to get their names
           return (
             <div>
               {assignedPrivateAmbulances && assignedPrivateAmbulances.length > 0
                 ? assignedPrivateAmbulances.map((item) => (
-                    <div key={item._id}>{item.privateAmbulanceAgentName}</div> // Display each amenity name
+                    <div key={item._id}>{item.privateAmbulanceagentName}</div> // Display each amenity name
                   ))
                 : "Not assigned to any Private Ambulance"} {/* Handle case where there are no amenities */}
             </div>
@@ -163,7 +166,7 @@ const BookingManagers = () => {
                className="me-2"
               onClick={() => handleAssign(row.original)}
             >
-             Assign
+            {row.original.assignedHospitals || row.original.assignedPrivateAmbulances ?"ReAssign": "Assign"}
             </Button>
             <Button
               variant="info"

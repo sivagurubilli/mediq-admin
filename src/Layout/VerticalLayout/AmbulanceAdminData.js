@@ -32,6 +32,12 @@ const SidebarData = () => {
         isHasArrow: true,
       },
       {
+        label: "Bookings",
+        icon: "mdi mdi-wallet",
+        url: "/private-ambulance/bookings",
+        isHasArrow: true,
+      },
+      {
         label: "Driver",
         icon: "mdi mdi-steering",
         url: "/private-ambulance/driver",

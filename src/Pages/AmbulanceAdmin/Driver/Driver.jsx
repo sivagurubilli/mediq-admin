@@ -43,7 +43,6 @@ const Driver = () => {
   const handlePageChange = ({ selected }) => {
     const newPage = selected + 1;
     setCurrentPage(newPage);
-    setSearch({ page: newPage }, { replace: true });
   };
 
   useEffect(() => {

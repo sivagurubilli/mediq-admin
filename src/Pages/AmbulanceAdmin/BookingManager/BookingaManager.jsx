@@ -20,18 +20,24 @@ const BookingManager = () => {
   const [totalData, setTotalData] = useState(2); 
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal1, setShowModal1] = useState(false);
-  const [editId, setEditId] = useState("");
+  const [bookingmanagers,setBookingManagers] = useState([])
+  const profile = JSON.parse(localStorage.getItem('user'))
 
-  const handleEdit1 = (item) => {
-    setShowModal1(true);
-    setEditId(item)
-  }
-
+  const filterBookingManagers = (AdminId, managers) => {
+    return managers?.filter(manager => {
+      if (manager?.assignedPrivateAmbulances) {
+        return manager?.assignedPrivateAmbulances.some(hospital => 
+          hospital?._id === AdminId && hospital?.active === true
+        );
+      }
+      return false;
+    });
+  };
   const getData = async () => {
     try {
       let data = await BookingManagerService.getBookingManagers();
     
-      setRow(data?.data);
+      setBookingManagers(data?.data);
       setTotalData(data?.data?.length);
     } catch (error) {
       alert("Failed to fetch data");
@@ -46,13 +52,16 @@ const BookingManager = () => {
   const handlePageChange = ({ selected }) => {
     const newPage = selected + 1;
     setCurrentPage(newPage);
-    setSearch({ page: newPage }, { replace: true });
   };
 
   useEffect(() => {
     getData();
   }, []);
 
+  useEffect(()=>{
+    const filteredBookingManagers = filterBookingManagers(profile?.privateHospitalDetails?._id, bookingmanagers);
+    setRow(filteredBookingManagers)
+  },[bookingmanagers])
  
   // Define columns for the react-table
   const columns = useMemo(

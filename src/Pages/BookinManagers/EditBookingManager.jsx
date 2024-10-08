@@ -17,9 +17,6 @@ const schema = Yup.object().shape({
   dateofbirth: Yup.string().required("Date of Birth is required"),
   gender: Yup.string().required("Gender is required"),
   employeeID: Yup.string().required("employeeID is required"),
-
- 
-
 });
 
 const EditBookingManagers = () => {

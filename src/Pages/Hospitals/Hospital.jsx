@@ -82,10 +82,7 @@ const Hospitals = () => {
   // Define columns for the react-table
   const columns = useMemo(
     () => [
-      {
-        Header: "ID",
-        accessor: "_id",
-      },
+    
       {
         Header: "Hospital Name",
         accessor: "hospitalName",
@@ -98,9 +95,14 @@ const Hospitals = () => {
         Header: "Hospital Admin Name",
         accessor: "hospitalAdminName",
       },
+    
       {
-        Header: "Hospital Admin Email",
-        accessor: "hospitalAdminEmail",
+        Header: "Phone Number",
+        accessor: "phoneNumber1",
+      },
+      {
+        Header: "Location",
+        accessor: "location",
       },
       {
         Header: "logo",

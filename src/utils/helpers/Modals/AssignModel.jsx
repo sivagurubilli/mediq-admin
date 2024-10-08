@@ -14,9 +14,11 @@ const AssignModal = ({ assignId, showModal, setShowModal, handleAssign }) => {
   const [selectedHospitals, setSelectedHospitals] = useState([]);
   const [selectedAmbulances, setSelectedAmbulances] = useState([]);
 
+  console.log(assignId)
   // Close modal function
   const handleCloseModal = () => {
     reset();
+    setError("")
     setShowModal(false);
   };
 
@@ -83,15 +85,18 @@ useEffect(() => {
     if (assignId.assignedHospitals) {
       const selected = assignId.assignedHospitals.filter(el => el.active);
       setSelectedHospitals(selected);
+    }else{
+      setSelectedHospitals([])
     }
     if (assignId.assignedPrivateAmbulances) {
       const selected = assignId.assignedPrivateAmbulances.filter(el => el.active);
       setSelectedAmbulances(selected);
+    }else{
+      setSelectedAmbulances([])
     }
   }
 }, [assignId]);
 
-console.log(selectedAmbulances,selectedHospitals)
 
   
 
@@ -102,22 +107,24 @@ console.log(selectedAmbulances,selectedHospitals)
 
       const filteredHospitals = selectedHospitals.filter((el) => el.active);
       const filteredAmbulances = selectedAmbulances.filter((el) => el.active);
-
+if(selectedType ==="hospital"){
       item = {
         bookingManagerId: assignId._id,
         hospitalIds: filteredHospitals.map(hospital => ({
           id: hospital._id,
           active: hospital.active
-        })),
-        privateAmbulanceIds: filteredAmbulances.map(ambulance => ({
+        }))
+      };
+    }else if(selectedType==="privateAmbulance"){
+      item = {
+        bookingManagerId: assignId._id,
+        privateIds: filteredAmbulances.map(ambulance => ({
           id: ambulance._id,
           active: ambulance.active
         }))
-      };
+      }; 
+    }
 
-    
-    
-  
     if (item && Object.keys(item).length > 0) {
       try {
         const response = await BookingManagerService.assignBookingManagers(item);

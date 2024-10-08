@@ -5,21 +5,35 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Card, Form, InputGroup, Col, Row,Button } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import PrivateAmbulanceAgentService from "../../services/MasterData/privateAmbulanceAgent.service";
-import { passwordregex } from "../../utils/Regex";
+import { passwordregex, phoneNumberRegex } from "../../utils/Regex";
 
 // Define validation schema with Yup
 const schema = Yup.object().shape({
-    privatetype: Yup.string().required("Type is required"),
-    privateAmbulanceagentName: Yup.string().required("Agent Name is required"),
-    privateAmbulanceAdminName: Yup.string().required("Ambulance Admin Name is required"),
-    privateAmbulanceAdminEmail: Yup.string()
-    .email("Must be a valid email")
-    .required("Ambulance Admin Email is required"),
-    privateAmbulanceAdminPassword: Yup.string()
-    .required("Ambulance Admin Password is required").matches(
-      passwordregex, "Password must be at least one Capital letter and special characters"),
-    confirmPrivateAmbulanceAdminPassword: Yup.string().oneOf([Yup.ref("privateAmbulanceAdminPassword"), null], "Passwords must match")
-    .required("Confirm Password is required"),
+  privatetype: Yup.string().required("Type is required"),
+  privateAmbulanceagentName: Yup.string().required("Agent Name is required"),
+  logo: Yup.mixed().notRequired(),
+  website: Yup.string(),
+  location: Yup.string().when('privatetype', ([privatetype], schema) => {
+    return privatetype === "non-partner" ? schema.required('Location is required') : schema.notRequired();
+  }),
+  phoneNumber1: Yup.string().when('privatetype', ([privatetype], schema) => {
+    return privatetype === "non-partner" ? schema.required('Phone Number 1 is required').matches(phoneNumberRegex,"Please enter valid phoneNumber") : schema.notRequired();
+  }),
+  phoneNumber2: Yup.string(),
+  privateAmbulanceAdminName: Yup.string().when('privatetype', ([privatetype], schema) => {
+    return privatetype === "partner" ? schema.required("Private Ambulance Admin Name is required") : schema.notRequired();
+  }),
+  privateAmbulanceAdminEmail: Yup.string().when('privatetype', ([privatetype], schema) => {
+    return privatetype === "partner" ? schema.required("Private Ambulance Admin Email is required") : schema.notRequired();
+  }),
+  privateAmbulanceAdminPassword: Yup.string().when('privatetype', ([privatetype], schema) => {
+    return privatetype === "partner" ? schema.required("Ambulance Admin Password is required").matches(
+    passwordregex, "Password must be at least one Capital letter and special characters") : schema.notRequired()
+  }),
+  confirmPrivateAmbulanceAdminPassword: Yup.string().oneOf([Yup.ref("privateAmbulanceAdminPassword"), null], "Passwords must match").when('privatetype', ([privatetype], schema) => {
+    return privatetype === "partner" ? schema.required("Confirm Password is required") : schema.notRequired();
+  }),
+
 });
 
 const EditPrivateAmbulanceAgent = () => {
@@ -34,6 +48,8 @@ const EditPrivateAmbulanceAgent = () => {
     register,
     handleSubmit,
     formState: { errors },
+    clearErrors,
+    watch
   } = useForm({
     defaultValues: {
         privatetype :data?.privatetype,
@@ -41,22 +57,30 @@ const EditPrivateAmbulanceAgent = () => {
                 logo: null || undefined,
 				website:data?.website || undefined,
 				privateAmbulanceAdminName:data?.privateAmbulanceAdminName,
+        location: data?.location  || undefined,
+        phoneNumber1: data?.phoneNumber1  || undefined,
+        phoneNumber2: data?.phoneNumber2 || undefined,
 				privateAmbulanceAdminEmail:data?.privateAmbulanceAdminEmail,
 				privateAmbulanceAdminPassword:"",
                 confirmPrivateAmbulanceAdminPassword:""
     },
     resolver: yupResolver(schema),
   });
+  const selectedType = watch("privatetype");
+  console.log(data)
 
   const onSubmit = async (data) => {
     const formData = new FormData();
-    formData.append("privatetype", data.privatetype);
+    data?.privatetype ? formData.append("privatetype", data.privatetype): undefined;
     data?.logo !==null ?  formData.append("logo", data?.logo[0] ) : undefined
-    formData.append("privateAmbulanceagentName", data.privateAmbulanceagentName);
-    data?.website !=="" ?  formData.append("website", data?.website ) : undefined
-        formData.append("privateAmbulanceAdminName", data.privateAmbulanceAdminName);
-    formData.append("privateAmbulanceAdminEmail", data.privateAmbulanceAdminEmail);
-    formData.append("privateAmbulanceAdminPassword", data.privateAmbulanceAdminPassword);
+    data?.privateAmbulanceagentName !=="" ?  formData.append("privateAmbulanceagentName", data.privateAmbulanceagentName) :undefined;
+    data?.website ?  formData.append("website", data?.website ) : undefined;
+    data?.location?   formData.append("location", data?.location) : undefined;
+    data?.phoneNumber1?  formData.append("phoneNumber1", data?.phoneNumber1) : undefined;
+    data?.phoneNumber2? formData.append("phoneNumber2", data?.phoneNumber2): undefined;
+      data?.privateAmbulanceAdminName ?  formData.append("privateAmbulanceAdminName", data.privateAmbulanceAdminName) : undefined;
+      data?.privateAmbulanceAdminName ? formData.append("privateAmbulanceAdminEmail", data.privateAmbulanceAdminEmail)  : undefined;
+      data?.privateAmbulanceAdminPassword ? formData.append("privateAmbulanceAdminPassword", data.privateAmbulanceAdminPassword) : undefined;
     try{
      
 
@@ -77,6 +101,10 @@ const EditPrivateAmbulanceAgent = () => {
   const cancelHandler = () => {
     navigate(-1);
   };
+
+  const selectChange =()=>{
+    clearErrors()
+  }
 
   return (
     <>
@@ -106,10 +134,10 @@ const EditPrivateAmbulanceAgent = () => {
                       </span>
                     </Col>
                     <Col md={4}>
-                      <Form.Group controlId="type">
+                      <Form.Group controlId="privatetype">
                         <Form.Control as="select"
                          className= 'form-select' 
-                         value={data?.privatetype}
+                         onInput={selectChange}
                       {...register("privatetype")}>
                           <option value="">Select  Ambulance Type</option>
                           <option value="partner">Partner</option>
@@ -187,9 +215,91 @@ const EditPrivateAmbulanceAgent = () => {
                       </Form.Group>
                     </Col>
                   </Row>
-
-                  {/* private Ambulance Admin Name */}
+                  {selectedType === "non-partner" && (
+          <>
+            <Row className="d-flex justify-content-center mb-3">
+                    <Col md={3} className="d-flex align-items-center mt-1">
+                      <Form.Label className="fs-6">
+                        Location
+                      </Form.Label>
+                      <span style={{ color: "red", marginTop: "-15px" }}>
+                        *
+                      </span>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group controlId="location">
+                        <InputGroup>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter Location"
+                            {...register("location")}
+                          />
+                        </InputGroup>
+                        {errors.location && (
+                          <p className="text-danger">
+                            {errors.location.message}
+                          </p>
+                        )}
+                      </Form.Group>
+                    </Col>
+                  </Row>
                   <Row className="d-flex justify-content-center mb-3">
+                    <Col md={3} className="d-flex align-items-center mt-1">
+                      <Form.Label className="fs-6">
+                        Phone Number 1
+                      </Form.Label>
+                      <span style={{ color: "red", marginTop: "-15px" }}>
+                        *
+                      </span>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group controlId="phoneNumber1">
+                        <InputGroup>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter phoneNumber1"
+                            {...register("phoneNumber1")}
+                          />
+                        </InputGroup>
+                        {errors.phoneNumber1 && (
+                          <p className="text-danger">
+                            {errors.phoneNumber1.message}
+                          </p>
+                        )}
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row className="d-flex justify-content-center mb-3">
+                    <Col md={3} className="d-flex align-items-center mt-1">
+                      <Form.Label className="fs-6">
+                        Phone Number 2
+                      </Form.Label>
+                     
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group controlId="phoneNumber2">
+                        <InputGroup>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter phoneNumber2"
+                            {...register("phoneNumber2")}
+                          />
+                        </InputGroup>
+                        {errors.phoneNumber2 && (
+                          <p className="text-danger">
+                            {errors.phoneNumber2.message}
+                          </p>
+                        )}
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+
+       
+          </>
+        )}
+                  {/* private Ambulance Admin Name */}
+                  {selectedType !== "non-partner" ?( <>    <Row className="d-flex justify-content-center mb-3">
                     <Col md={3} className="d-flex align-items-center mt-1">
                       <Form.Label className="fs-6">
                        Ambulance Admin Name
@@ -290,7 +400,7 @@ const EditPrivateAmbulanceAgent = () => {
                       <Form.Group controlId="adminconfirmPassword">
                         <InputGroup>
                           <Form.Control
-                       type={confirmPasswordShow ? "text" : "password"}
+  type={confirmPasswordShow ? "text" : "password"}
                               placeholder="Confirm Admin Password"
                             {...register("confirmPrivateAmbulanceAdminPassword")}
                           />
@@ -308,8 +418,7 @@ const EditPrivateAmbulanceAgent = () => {
                         )}
                       </Form.Group>
                     </Col>
-                    </Row>
-                
+                    </Row> </> ):""}
 
                   {/* Buttons */}
                   <div className="col-md-12 mt-4" align="center">

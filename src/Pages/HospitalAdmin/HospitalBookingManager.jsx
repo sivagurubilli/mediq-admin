@@ -22,28 +22,28 @@ const HospitalBookingManagers = () => {
   const [totalData, setTotalData] = useState(2); 
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal1, setShowModal1] = useState(false);
-  const [editId, setEditId] = useState("");
+const [bookingmanagers,setBookingManagers] = useState([])
+  const profile = JSON.parse(localStorage.getItem('user'))
 
-
-  const handleAdd = () => {
-    navigate("/admin/add-booking-manager");
+  const filterBookingManagersByHospital = (hospitalAdminId, managers) => {
+    return managers?.filter(manager => {
+      if (manager?.assignedHospitals) {
+        return manager?.assignedHospitals.some(hospital => 
+          hospital?._id === hospitalAdminId && hospital?.active === true
+        );
+      }
+      return false;
+    });
   };
+  
+  // Get the filtered booking managers
+  
 
-  const handleEdit = () => {
-    navigate(`/admin/edit-booking-manager/${editId?._id}`,{
-        state: { listing: editId },
-    })
-  };
-
-  const handleEdit1 = (item) => {
-    setShowModal1(true);
-    setEditId(item)
-  }
   const getData = async () => {
     try {
       let data = await BookingManagerService.getBookingManagers();
     
-      setRow(data?.data);
+      setBookingManagers(data?.data);
       setTotalData(data?.data?.length);
     } catch (error) {
       alert("Failed to fetch data");
@@ -51,34 +51,22 @@ const HospitalBookingManagers = () => {
     }
   };
   
-  const handleDelete1 = async () => {
-    try {
-      let data = await HospitalService.deleteHospital({}, deleteId);
-      getData();
-      alert(data?.message || "Success");
-      setTimeout(() => setShowModal(false), 1000);
-    } catch (error) {
-      setShowModal(false);
-      alert("Failed to delete item");
-      console.error("Failed to delete item", error);
-    }
-  };
-
-  const handleDelete = (item) => {
-    setShowModal(true);
-    setDeleteId(item._id);
-  };
 
   const handlePageChange = ({ selected }) => {
     const newPage = selected + 1;
     setCurrentPage(newPage);
-    setSearch({ page: newPage }, { replace: true });
+
   };
 
   useEffect(() => {
     getData();
   }, []);
 
+
+  useEffect(()=>{
+    const filteredBookingManagers = filterBookingManagersByHospital(profile.hospitalDetails._id, bookingmanagers);
+    setRow(filteredBookingManagers)
+  },[bookingmanagers])
  
   // Define columns for the react-table
   const columns = useMemo(
@@ -157,16 +145,7 @@ const HospitalBookingManagers = () => {
   return (
 
     <Fragment>
-    <DeleteModal
-      showModal={showModal}
-      setShowModal={setShowModal}
-      handleDelete={handleDelete1}
-    />
-   <EditModal
-      showModal={showModal1}
-      setShowModal={setShowModal1}
-      handleEdit={handleEdit}
-    />
+  
     <div className="text-start mb-2 mt-5 ms-1" style={{ fontWeight: "800" }}>
       <Link to="/admin/dashboard">Dashboard</Link>&nbsp;&#8811;&nbsp; Booking Managers
       

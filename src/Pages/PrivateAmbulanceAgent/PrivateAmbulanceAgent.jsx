@@ -70,7 +70,7 @@ const PrivateAmbulanceAgent = () => {
   const handlePageChange = ({ selected }) => {
     const newPage = selected + 1;
     setCurrentPage(newPage);
-    setSearch({ page: newPage }, { replace: true });
+
   };
 
   useEffect(() => {
@@ -81,17 +81,14 @@ const PrivateAmbulanceAgent = () => {
   // Define columns for the react-table
   const columns = useMemo(
     () => [
-      {
-        Header: "ID",
-        accessor: "_id",
-      },
+    
       {
         Header: " Ambulance Agent Name",
         accessor: "privateAmbulanceagentName",
       },
       {
-        Header: " Ambulance Admin Email ",
-        accessor: "privateAmbulanceAdminEmail",
+        Header: " Ambulance Admin Phone ",
+        accessor: "phoneNumber1",
       },
       {
         Header: "Ambulance Type",
@@ -101,7 +98,10 @@ const PrivateAmbulanceAgent = () => {
         Header: " Ambulance Admin Name",
         accessor: "privateAmbulanceAdminName",
       },
-      
+      {
+        Header: "Location",
+        accessor: "location",
+      },
      
     
       {
