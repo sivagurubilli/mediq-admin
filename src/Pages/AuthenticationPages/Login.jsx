@@ -11,6 +11,7 @@ import { emailregex } from "../../utils/Regex";
 import { passwordregex } from "../../utils/Regex";
 import { login } from "../../store/slices/auth";
 import { useDispatch } from "react-redux";
+import Loader from "../../utils/helpers/Loader";
 
 // Define validation schema using Yup
 const validationSchema = yup.object().shape({
@@ -31,6 +32,7 @@ const Login = () => {
   const [passwordShow, setPasswordShow] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loading,setLoading] =  useState(false)
   const {
     register,
     handleSubmit,
@@ -44,12 +46,14 @@ const Login = () => {
       userEmail: data.email,
       userPassword: data.password,
     };
+    setLoading(true)
 
     dispatch(login(item))
       .unwrap()
       .then((res) => {
         console.log(res);
         if (res?.user?.status === 200) {
+          setLoading(false)
           localStorage.setItem("password",data?.password)
           if(res?.user?.role ==="superadmin"){
           navigate("/admin");
@@ -65,17 +69,18 @@ const Login = () => {
         }
       })
       .catch((message) => {
-        console.log(message);
+        setLoading(false)
         alert(message.message);
       });
   };
 
+  console.log(loading)
   return (
     <Fragment>
       <Helmet>
         <body className="bg-light"></body>
       </Helmet>
-
+{loading ? <Loader /> :""}
       <div className="row  mx-0 vh-100">
         <Col
           md={12}
@@ -177,7 +182,7 @@ const Login = () => {
             style={{ objectFit: "cover" }}
           />
         </Col>
-      </div>
+      </div> 
     </Fragment>
   );
 };

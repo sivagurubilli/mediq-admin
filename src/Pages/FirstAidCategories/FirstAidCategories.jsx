@@ -209,6 +209,7 @@ const FirstAidCategories = () => {
                 style={{ width: "25%" }}
               />
             </div>
+            
             <div className="table-responsive">
               <table {...getTableProps()} className="table text-nowrap">
                 <thead className="thead-dark">
