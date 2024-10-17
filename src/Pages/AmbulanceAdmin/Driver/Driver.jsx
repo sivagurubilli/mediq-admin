@@ -21,14 +21,26 @@ const Driver = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal1, setShowModal1] = useState(false);
   const [editId, setEditId] = useState("");
+const [drivers,setDrivers] = useState([])
+  const profile = JSON.parse(localStorage.getItem('user'))
 
+  
+  const filterDriversByAmb = (hospitalAdminId, managers) => {
+    return managers?.filter(manager => {
+      if (manager?.assignedPrivateAmbulances) {
+        return manager?.assignedPrivateAmbulances.some(hospital => 
+          hospital?._id === hospitalAdminId && hospital?.active === true
+        );
+      }
+      return false;
+    });
+  };
 
 
   const getData = async () => {
     try {
       let data = await DriverService.getDrivers();
-    
-      setRow(data?.data);
+      setDrivers(data?.data);
       setTotalData(data?.data?.length);
     } catch (error) { 
       alert("Failed to fetch data");
@@ -49,7 +61,12 @@ const Driver = () => {
     getData();
   }, []);
 
- 
+  useEffect(()=>{
+    const filtereddriers = filterDriversByAmb(profile?.privateHospitalDetails?._id, drivers);
+    setRow(filtereddriers)
+  },[drivers])
+
+
   // Define columns for the react-table
   const columns = useMemo(
     () => [

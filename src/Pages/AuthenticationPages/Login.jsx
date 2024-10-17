@@ -63,6 +63,8 @@ const Login = () => {
           localStorage.setItem("hospitallogo",JSON.stringify(res?.user?.hospitalDetails?.logo))
         }else{
           navigate("/private-ambulance")
+          localStorage.setItem("ambulancAdmin",JSON.stringify(res?.user?.privateHospitalDetails))
+          localStorage.setItem("ambulancAdmin",JSON.stringify(res?.user?.privateHospitalDetails?.logo))
         }
         } else {
           alert(res?.user?.message);

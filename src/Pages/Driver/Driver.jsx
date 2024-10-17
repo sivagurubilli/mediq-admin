@@ -8,6 +8,7 @@ import { useTable, usePagination, useSortBy } from 'react-table';
 import { pagesToShowInitially } from "../../utils/Regex";
 import EditModal from "../../utils/helpers/Modals/Editmodal";
 import DriverService from "../../services/MasterData/driver.service";
+import AssignModal from "../../utils/helpers/Modals/AssignModel";
 
 const AdminDriver = () => {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ const AdminDriver = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal1, setShowModal1] = useState(false);
   const [editId, setEditId] = useState("");
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [assignId, setAssignId] = useState("");
+
 
   const handleAdd = () => {
     navigate("/admin/add-driver");
@@ -65,6 +69,10 @@ const AdminDriver = () => {
     setShowModal(true);
     setDeleteId(item._id);
   };
+  const handleAssign =(item)=>{
+    setShowAssignModal(true);
+    setAssignId(item);
+  }
 
   const handlePageChange = ({ selected }) => {
     const newPage = selected + 1;
@@ -80,10 +88,7 @@ const AdminDriver = () => {
   // Define columns for the react-table
   const columns = useMemo(
     () => [
-      {
-        Header: "ID",
-        accessor: "_id",
-      },
+
       {
         Header: " Driver Name",
         accessor: "drivername",
@@ -101,7 +106,25 @@ const AdminDriver = () => {
         accessor: "gender",
       },
       
-     
+      {
+        Header: "Assigned Private Ambulances",
+        accessor: "assignedPrivateAmbulances", // Change to access the amenities array
+        Cell: ({ row }) => {
+          const assignedPrivateAmbulances =  row.original.assignedPrivateAmbulances
+          ? row.original.assignedPrivateAmbulances.filter(hospital => hospital.active === true)
+          : [];
+          // Map over amenities to get their names
+          return (
+            <div>
+              {assignedPrivateAmbulances && assignedPrivateAmbulances.length > 0
+                ? assignedPrivateAmbulances.map((item) => (
+                    <div key={item._id}>{item.privateAmbulanceagentName}</div> // Display each amenity name
+                  ))
+                : "Not assigned to any Private Ambulance"} {/* Handle case where there are no amenities */}
+            </div>
+          );
+        },
+      },
     
       {
         Header: "Action",
@@ -113,7 +136,7 @@ const AdminDriver = () => {
                className="me-2"
               onClick={() => handleAssign(row.original)}
             >
-             Assign
+            {row.original.assignedPrivateAmbulances  ?"ReAssign": "Assign"}
             </Button>
             <Button
               variant="info"
@@ -193,6 +216,13 @@ const AdminDriver = () => {
       showModal={showModal1}
       setShowModal={setShowModal1}
       handleEdit={handleEdit}
+    />
+
+<AssignModal
+       assignId ={assignId}
+      showModal={showAssignModal}
+      setShowModal={setShowAssignModal}
+      handleAssign={getData}
     />
     <div className="text-start mb-2 mt-5 ms-1" style={{ fontWeight: "800" }}>
       <Link to="/admin/dashboard">Dashboard</Link>&nbsp;&#8811;&nbsp; Drivers

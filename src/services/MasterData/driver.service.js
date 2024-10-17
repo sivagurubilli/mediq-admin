@@ -68,6 +68,20 @@ static editDrivers(item,id) {
 }
   
   
-
+static assignDrivers(item) {
+    var user = JSON.parse(localStorage.getItem("user"));
+    const config = {
+        headers: {
+            authorization:user?.accessToken 
+        }
+    }
+  return axios
+      .post(API_BASE_URL + `/assigndrivers`,item,config)
+      .then((response) => {
+          if (response.data) {
+          }
+          return response.data;
+      });
+}
 }
 export default DriverService;

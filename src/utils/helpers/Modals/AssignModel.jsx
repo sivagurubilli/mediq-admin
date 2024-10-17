@@ -5,6 +5,7 @@ import { Modal, ModalBody } from "reactstrap";
 import HospitalService from "../../../services/MasterData/hospital.service";
 import PrivateAmbulanceAgentService from "../../../services/MasterData/privateAmbulanceAgent.service";
 import BookingManagerService from "../../../services/MasterData/bookingmanager.service";
+import DriverService from "../../../services/MasterData/driver.service";
 
 const AssignModal = ({ assignId, showModal, setShowModal, handleAssign }) => {
   const [selectedType, setSelectedType] = useState(""); // To store selected type
@@ -117,7 +118,7 @@ if(selectedType ==="hospital"){
       };
     }else if(selectedType==="privateAmbulance"){
       item = {
-        bookingManagerId: assignId._id,
+        driverId: assignId._id,
         privateIds: filteredAmbulances.map(ambulance => ({
           id: ambulance._id,
           active: ambulance.active
@@ -127,7 +128,7 @@ if(selectedType ==="hospital"){
 
     if (item && Object.keys(item).length > 0) {
       try {
-        const response = await BookingManagerService.assignBookingManagers(item);
+        const response = await DriverService.assignDrivers(item);
         if (response.status === 200) {
           handleAssign();
           handleCloseModal();
@@ -158,7 +159,6 @@ if(selectedType ==="hospital"){
                 onChange={handleTypeChange}
               >
                 <option value="">Select Type</option>
-                <option value="hospital">Hospital</option>
                 <option value="privateAmbulance">Private Ambulance</option>
                 <option value="mortuary">Mortuary</option>
               </Form.Control>
