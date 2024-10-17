@@ -62,6 +62,12 @@ const SidebarData = () => {
       isHasArrow: true,
     },
     {
+      label: "Hospital Branch",
+      icon: "mdi mdi-anchor",
+      url: "/admin/hospitals-branch",
+      isHasArrow: true,
+    },
+    {
       label: "Private Ambulance Agent",
       icon: "mdi mdi-ambulance",
       url: "/admin/private-ambulance-agent",
@@ -77,6 +83,12 @@ const SidebarData = () => {
       label: "Invoices",
       icon: "mdi mdi-dialpad",
       url: "/admin/invoices",
+      isHasArrow: true,
+    },
+    {
+      label: "Customer Support",
+      icon: "mdi mdi-seat-recline-normal",
+      url: "/admin/customer-support",
       isHasArrow: true,
     },
     {

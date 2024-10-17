@@ -9,6 +9,7 @@ import { pagesToShowInitially } from "../../utils/Regex";
 import EditModal from "../../utils/helpers/Modals/Editmodal";
 import DriverService from "../../services/MasterData/driver.service";
 import AssignModal from "../../utils/helpers/Modals/AssignModel";
+import DriverAssignModal from "../../utils/helpers/Modals/DriverAsssignModel";
 
 const AdminDriver = () => {
   const navigate = useNavigate();
@@ -218,7 +219,7 @@ const AdminDriver = () => {
       handleEdit={handleEdit}
     />
 
-<AssignModal
+<DriverAssignModal
        assignId ={assignId}
       showModal={showAssignModal}
       setShowModal={setShowAssignModal}

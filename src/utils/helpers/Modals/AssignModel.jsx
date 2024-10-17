@@ -118,7 +118,7 @@ if(selectedType ==="hospital"){
       };
     }else if(selectedType==="privateAmbulance"){
       item = {
-        driverId: assignId._id,
+        bookingManagerId: assignId._id,
         privateIds: filteredAmbulances.map(ambulance => ({
           id: ambulance._id,
           active: ambulance.active
@@ -128,7 +128,8 @@ if(selectedType ==="hospital"){
 
     if (item && Object.keys(item).length > 0) {
       try {
-        const response = await DriverService.assignDrivers(item);
+        const response = await BookingManagerService.assignBookingManagers(item);
+
         if (response.status === 200) {
           handleAssign();
           handleCloseModal();
@@ -159,6 +160,8 @@ if(selectedType ==="hospital"){
                 onChange={handleTypeChange}
               >
                 <option value="">Select Type</option>
+                <option value="hospital"> Hospitals</option>
+
                 <option value="privateAmbulance">Private Ambulance</option>
                 <option value="mortuary">Mortuary</option>
               </Form.Control>
