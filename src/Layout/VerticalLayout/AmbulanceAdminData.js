@@ -38,6 +38,12 @@ const SidebarData = () => {
         isHasArrow: true,
       },
       {
+        label: "Wallet",
+        icon: "mdi mdi-wallet",
+        url: "/private-ambulance/wallet",
+        isHasArrow: true,
+      },
+      {
         label: "Driver",
         icon: "mdi mdi-steering",
         url: "/private-ambulance/driver",

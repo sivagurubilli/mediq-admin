@@ -47,6 +47,10 @@ import AdminDriver from "../Pages/Driver/Driver.jsx";
 import AdminAddDriver from "../Pages/Driver/AddDriver.jsx";
 import AdminEditDriver from "../Pages/Driver/EditDriver.jsx";
 import EditAmbulance from "../Pages/AmbulanceAdmin/Ambulance/EditAmbulance.jsx";
+import CustomerSupport from "../Pages/CustomerSupport/CustomerSupport.jsx";
+import AddCustomerSupport from "../Pages/CustomerSupport/AddCustomerSupport.jsx";
+import EditCustomerSupport from "../Pages/CustomerSupport/EditCustomerSupport.jsx";
+import AmbulanceAdminWalletBalance from "../Pages/AmbulanceAdmin/Wallet/wallet.jsx";
 
 const superadminRoutes = [
   {path:"/", component: <Crm /> },
@@ -62,6 +66,10 @@ const superadminRoutes = [
   {path:"/admin/first-aid", component: <FirstAID /> },
   {path:"/admin/add-first-aid", component: <AddFirstAid /> },
   {path:"/admin/edit-first-aid/:id", component: <EditFirstAid /> },
+
+    {path:"/admin/customer-support", component:<CustomerSupport/>},
+    {path:"/admin/add-customer-support", component:<AddCustomerSupport/>},
+    {path:"/admin/edit-customer-support/:id", component:<EditCustomerSupport/>},
 
   {path:"/admin/hospitals", component: <Hospitals /> },
   {path:"/admin/add-hospital", component: <AddHospital /> },
@@ -110,7 +118,8 @@ const ambulanceAdminRoutes = [
   { path: "/private-ambulance/edit-ambulance/:id", component: <EditAmbulance /> },
 
   { path: "/private-ambulance/driver", component: <Driver /> },
-  
+  { path: "/private-ambulance/wallet", component: <AmbulanceAdminWalletBalance /> },
+
 
 ];
 

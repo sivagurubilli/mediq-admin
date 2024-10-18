@@ -16,9 +16,12 @@ const DriverAssignModal = ({ assignId, showModal, setShowModal, handleAssign }) 
   const [selectedAmbulances, setSelectedAmbulances] = useState([]);
 
   // Close modal function
-  const handleCloseModal = () => {
-    reset();
-    setShowModal(false);
+
+    const handleCloseModal = () => {
+      reset();
+      setError("")
+      setShowModal(false);
+  
   };
 
   // Use react-hook-form
@@ -84,10 +87,14 @@ useEffect(() => {
     if (assignId.assignedHospitals) {
       const selected = assignId.assignedHospitals.filter(el => el.active);
       setSelectedHospitals(selected);
+    }else{
+      setSelectedHospitals([])
     }
     if (assignId.assignedPrivateAmbulances) {
       const selected = assignId.assignedPrivateAmbulances.filter(el => el.active);
       setSelectedAmbulances(selected);
+    }else{
+      setSelectedAmbulances([])
     }
   }
 }, [assignId]);
